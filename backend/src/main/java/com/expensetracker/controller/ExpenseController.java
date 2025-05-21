@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/expenses")
@@ -22,7 +23,10 @@ public class ExpenseController {
     }
 
     @GetMapping
-    public List<Expense> getExpenses() {
+    public List<Expense> getExpenses(@RequestParam(required = false) String month) {
+        if (month != null) {
+            return expenseService.getExpensesByMonth(month);
+        }
         return expenseService.getAllExpenses();
     }
 }
