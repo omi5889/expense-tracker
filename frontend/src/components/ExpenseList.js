@@ -7,6 +7,13 @@ function ExpenseList({ refresh }) {
   const [month, setMonth] = useState('');
   const [category, setCategory] = useState('');
   const [total, setTotal] = useState(0);
+  const [editingId, setEditingId] = useState(null);
+  const [editData, setEditData] = useState({
+    amount: '',
+    category: '',
+    date: '',
+    description: ''
+  });
 
   const fetchExpenses = async () => {
     let url = 'http://localhost:8080/api/expenses';
@@ -46,6 +53,30 @@ function ExpenseList({ refresh }) {
     }
   };
 
+  const handleEditClick = (expense) => {
+    setEditingId(expense.id);
+    setEditData({
+      amount: expense.amount,
+      category: expense.category,
+      date: expense.date,
+      description: expense.description
+    });
+  };
+
+  const handleSave = async (id) => {
+    await axios.put(`http://localhost:8080/api/expenses/${id}`, {
+      ...editData,
+      amount: parseFloat(editData.amount)  // ensure amount is numeric
+    });
+    setEditingId(null);
+    fetchExpenses(); // refresh list
+  };
+
+  const handleChange = (e) => {
+    setEditData({ ...editData, [e.target.name]: e.target.value });
+  };
+
+
 
   return (
     <div className="container mt-4">
@@ -83,19 +114,85 @@ function ExpenseList({ refresh }) {
       <ul className="list-group">
         {filteredExpenses.map((exp) => (
           <li key={exp.id} className="list-group-item">
-            <div>
-              <strong>{exp.date}</strong> — ${exp.amount}
-              <span className="text-muted"> ({exp.category})</span><br />
-              {exp.description}
-            </div>
-            <button
-              className="btn btn-sm btn-danger"
-              onClick={() => handleDelete(exp.id)}
-            >
-              Delete
-            </button>
+            {editingId === exp.id ? (
+              <div className="row g-2 align-items-center">
+                <div className="col-md-2">
+                  <input
+                    type="date"
+                    name="date"
+                    className="form-control"
+                    value={editData.date}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-2">
+                  <input
+                    type="number"
+                    name="amount"
+                    className="form-control"
+                    value={editData.amount}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-3">
+                  <input
+                    type="text"
+                    name="category"
+                    className="form-control"
+                    value={editData.category}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-3">
+                  <input
+                    type="text"
+                    name="description"
+                    className="form-control"
+                    value={editData.description}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="col-md-2">
+                  <button
+                    className="btn btn-success btn-sm me-2"
+                    onClick={() => handleSave(exp.id)}
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => setEditingId(null)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{exp.date}</strong> — ₹{exp.amount}
+                  <span className="text-muted"> ({exp.category})</span><br />
+                  {exp.description}
+                </div>
+                <div>
+                  <button
+                    className="btn btn-sm btn-outline-primary me-2"
+                    onClick={() => handleEditClick(exp)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleDelete(exp.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )}
           </li>
         ))}
+
       </ul>
     </div>
 
