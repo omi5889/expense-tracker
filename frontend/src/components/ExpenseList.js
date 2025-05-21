@@ -39,6 +39,14 @@ function ExpenseList({ refresh }) {
   // Get list of categories from current data
   const categoryOptions = [...new Set(allExpenses.map((exp) => exp.category))];
 
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this expense?")) {
+      await axios.delete(`http://localhost:8080/api/expenses/${id}`);
+      fetchExpenses(); // refresh list
+    }
+  };
+
+
   return (
     <div className="container mt-4">
       <h2 className="mb-3">Expenses</h2>
@@ -75,9 +83,17 @@ function ExpenseList({ refresh }) {
       <ul className="list-group">
         {filteredExpenses.map((exp) => (
           <li key={exp.id} className="list-group-item">
-            <strong>{exp.date}</strong> — ${exp.amount}  
-            <span className="text-muted"> ({exp.category})</span><br />
-            {exp.description}
+            <div>
+              <strong>{exp.date}</strong> — ${exp.amount}
+              <span className="text-muted"> ({exp.category})</span><br />
+              {exp.description}
+            </div>
+            <button
+              className="btn btn-sm btn-danger"
+              onClick={() => handleDelete(exp.id)}
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>
