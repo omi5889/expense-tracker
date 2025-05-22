@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://expense-tracker-frontend-89sd.onrender.com")
 @RestController
 @RequestMapping("/api/expenses")
 public class ExpenseController {
