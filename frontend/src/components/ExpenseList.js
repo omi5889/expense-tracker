@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+
 function ExpenseList({ refresh }) {
   const [allExpenses, setAllExpenses] = useState([]);
   const [filteredExpenses, setFilteredExpenses] = useState([]);
@@ -14,9 +15,10 @@ function ExpenseList({ refresh }) {
     date: '',
     description: ''
   });
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   const fetchExpenses = async () => {
-    let url = 'http://localhost:8080/api/expenses';
+    let url = `${API_BASE_URL}/api/expenses`;
     if (month) {
       url += `?month=${month}`;
     }
@@ -48,7 +50,7 @@ function ExpenseList({ refresh }) {
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this expense?")) {
-      await axios.delete(`http://localhost:8080/api/expenses/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/expenses/${id}`);
       fetchExpenses(); // refresh list
     }
   };
@@ -64,7 +66,7 @@ function ExpenseList({ refresh }) {
   };
 
   const handleSave = async (id) => {
-    await axios.put(`http://localhost:8080/api/expenses/${id}`, {
+    await axios.put(`${API_BASE_URL}/api/expenses/${id}`, {
       ...editData,
       amount: parseFloat(editData.amount)  // ensure amount is numeric
     });

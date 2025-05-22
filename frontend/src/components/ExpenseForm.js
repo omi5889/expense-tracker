@@ -8,6 +8,7 @@ function ExpenseForm({ onAdd }) {
     description: '',
     date: ''
   });
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -15,7 +16,7 @@ function ExpenseForm({ onAdd }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post('http://localhost:8080/api/expenses', form);
+    await axios.post(`${API_BASE_URL}/api/expenses`, form);
     onAdd();  // Refresh expense list
     setForm({ amount: '', category: '', description: '', date: '' });
   };
